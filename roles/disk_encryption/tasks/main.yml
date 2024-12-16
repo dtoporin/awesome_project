@@ -1,0 +1,37 @@
+---
+# tasks file for disk_encryption
+- name: Make sure that cryptsetup utils is installed
+  ansible.builtin.apt:
+    name: cryptsetup
+    state: present
+
+- name: Check if partition exists
+  ansible.builtin.stat:
+    path: "{{ luks.target_disk }}"
+  register: partition_stat
+
+- name: Fail if the partition does not exist
+  ansible.builtin.fail:
+    msg: "Partition {{ luks.target_disk }} does not exist."
+  when: not partition_stat.stat.exists
+
+- name: Create a new ext4 primary partition on {{ luks.target_disk }}
+  community.general.parted:
+    device: "{{ luks.target_disk }}"
+    label: "gpt"
+    number: 1
+    state: present
+    fs_type: ext4
+
+- name: Create LUKS container with a passphrase
+  community.crypto.luks_device:
+    device: "{{ luks.target_disk }}1"
+    state: "opened"
+    passphrase: "{{ luks.passphrase }}"
+    name: "{{ luks.name }}"
+    label: "{{ luks.label }}"
+
+- name: Create a ext4 filesystem on /dev/mapper/{{ luks.label }}
+  community.general.filesystem:
+    fstype: ext4
+    dev: /dev/mapper/{{ luks.name }}

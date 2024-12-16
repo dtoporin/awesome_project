@@ -1,0 +1,28 @@
+---
+# tasks file for network_management
+- name: Get the current interface nam
+  ansible.builtin.debug:
+    msg: "The current active interface is {{ ansible_facts['default_ipv4']['interface'] }}"
+
+- name: Generate new network interface configuration file
+  ansible.builtin.template:
+    src: 50-cloud-init.yaml.j2
+    dest: /etc/netplan/50-cloud-init.yaml
+    owner: root
+    group: root
+    mode: '0600'
+  register: new_config_genereted
+
+- name: Apply network configuration
+  ansible.builtin.command: netplan apply
+  changed_when: true
+  when: new_config_genereted.changed
+
+- name: Refresh facts about network after configuration changes
+  ansible.builtin.setup:
+    gather_subset:
+      - network
+
+- name: Get the current interface name
+  ansible.builtin.debug:
+    msg: "The current active interface is {{ ansible_facts['default_ipv4']['interface'] }}"

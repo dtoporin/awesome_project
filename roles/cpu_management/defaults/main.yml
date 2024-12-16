@@ -1,0 +1,3 @@
+---
+# defaults file for cpu_management
+cpu_governor_mode: "performance"

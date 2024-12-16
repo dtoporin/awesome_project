@@ -1,0 +1,5 @@
+---
+# defaults file for network_management
+network:
+  interface:
+    name: "net0"

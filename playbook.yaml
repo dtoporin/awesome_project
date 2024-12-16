@@ -1,0 +1,40 @@
+- name: Server bootstrap configuration
+  hosts: all
+  become: true
+  vars:
+    cpu_governor_mode: "performance"
+    allow_reboot: true
+    luks:
+      passphrase: "cryptoCrypt"
+      name: "cryptoName"
+      label: "cryptoLabel"
+      target_disk: "/dev/xvdf"
+      target_part: "/dev/xvda14"
+    network:
+      interface:
+        name: "net0"
+
+  roles:
+    - network_management
+    - disk_encryption
+    - partition_encryption
+    - cpu_management
+
+  handlers:
+    - name: Restart host
+      ansible.builtin.reboot:
+        reboot_timeout: 300
+      when: allow_reboot
+  
+  tasks:
+    - name: Get CPU details
+      ansible.builtin.debug:
+        msg:
+          - "Processor: {{ ansible_processor }}"
+          - "Physical CPUs: {{ ansible_processor_count }}"
+          - "Cores per CPU: {{ ansible_processor_cores }}"
+          - "Threads per Core: {{ ansible_processor_threads_per_core }}"
+          - "Total vCPUs: {{ ansible_processor_vcpus }}"
+          - >
+            Hyper-Threading is 
+            {% if ansible_processor_threads_per_core > 1 %}enabled{% else %}disabled{% endif -%}.

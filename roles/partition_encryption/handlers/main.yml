@@ -1,0 +1,6 @@
+---
+# handlers file for disk_encryption
+- name: Reboot host
+  ansible.builtin.reboot:
+      connect_timeout: 15
+  when: allow_reboot

@@ -1,0 +1,7 @@
+---
+# defaults file for disk_encryption
+luks:
+  target_part: ""
+  passphrase: "cryptoCrypt"
+  name: "cryptoName"
+  label: "cryptoLabel"

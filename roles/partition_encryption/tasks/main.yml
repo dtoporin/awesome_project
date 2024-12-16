@@ -1,0 +1,25 @@
+---
+# tasks file for disk_encryption
+- name: Make sure that cryptsetup utils is installed
+  ansible.builtin.apt:
+    name: cryptsetup
+    state: present
+
+- name: Check if partition exists
+  ansible.builtin.stat:
+    path: "{{ luks.target_part }}"
+  register: partition_stat
+
+- name: Fail if the partition does not exist
+  ansible.builtin.fail:
+    msg: "Partition {{ luks.target_part }} does not exist."
+  when: not partition_stat.stat.exists
+
+- name: Create LUKS container with a passphrase
+  community.crypto.luks_device:
+    device: "{{ luks.target_part }}"
+    state: "opened"
+    passphrase: "{{ luks.passphrase }}"
+    name: "{{ luks.name }}"
+    label: "{{ luks.label }}"
+

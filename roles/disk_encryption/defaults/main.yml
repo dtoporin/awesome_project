@@ -1,0 +1,7 @@
+---
+# defaults file for disk_encryption
+luks:
+  target_disk: "/dev/sdb"
+  passphrase: "cryptoCrypt"
+  name: "cryptoName"
+  label: "cryptoLabel"
