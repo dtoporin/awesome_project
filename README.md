@@ -1,9 +1,10 @@
 Usefull playbook for setup servers
 =========
-This playbook play three roles
-    - network_management
-    - disk_encryption
-    - cpu_management
+This playbook play four roles:
+- [network_management](roles/network_management)
+- [disk_encryption](roles/disk_encryption)
+- [partition_encryption](roles/partition_encryption)
+- [cpu_management](roles/cpu_management)
 
 >[!CAUTION] 
 >This playbook included roles with destructive tasks.
